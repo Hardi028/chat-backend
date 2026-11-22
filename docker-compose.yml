@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: chat
+      POSTGRES_PASSWORD: chat
+      POSTGRES_DB: chat
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  firestore:
+    image: mtlynch/firestore-emulator
+    environment:
+      FIRESTORE_PROJECT_ID: demo-chat
+      PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
