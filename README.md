@@ -7,11 +7,26 @@
 
 ```bash
 cp .env.example .env
-docker compose up -d        # Postgres :5432 + Firestore emulator :8080
+docker compose up -d        # Postgres :5432 + Firestore emulator :8085
 npm install
 npm run migrate             # creates tables
 npm run dev                 # http://localhost:3000
 ```
+
+The `chat`/`chat` database credentials in `.env.example` are for the PostgreSQL
+container started by Docker Compose. If you use an existing local PostgreSQL
+instead, set `DATABASE_URL` in `.env` to that server's username, password, and
+an existing database, for example:
+
+```text
+DATABASE_URL=postgres://postgres:<your-password>@localhost:5432/chat
+```
+
+Keep the real password in your local `.env`; do not commit it.
+
+If PostgreSQL is already running locally, start only the Firestore emulator with
+`docker compose up -d firestore` to avoid binding the Compose PostgreSQL service
+to the same host port.
 
 Production: unset `FIRESTORE_EMULATOR_HOST`, set `GOOGLE_APPLICATION_CREDENTIALS` to a service-account key, then `npm run build && npm run migrate:prod && npm start`.
 
@@ -55,6 +70,10 @@ Design notes:
 Errors: `{ "error": { "code", "message", "details?" } }` with 400 / 403 / 404 / 409.
 
 ## Try it
+
+Start the server and open [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+to explore the API and send requests interactively. Create users first to get IDs
+for trying the chat endpoints. The health check is at `/health`.
 
 ```bash
 A=$(curl -s -XPOST localhost:3000/users -H 'content-type: application/json' -d '{"username":"alice"}' | jq -r .id)

@@ -1,6 +1,8 @@
 import express, { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
 import { AppError } from "./errors";
+import swaggerUi from "swagger-ui-express";
+import { apiSpec } from "./openapi";
 import { chatRouter } from "./routes/chat";
 import { userRouter } from "./routes/user";
 
@@ -11,6 +13,8 @@ export function createApp(): express.Express {
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
   });
+
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 
   app.use(userRouter);
   app.use(chatRouter);
